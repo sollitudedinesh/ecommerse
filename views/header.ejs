@@ -174,12 +174,12 @@
                   <li class="side-wrap user-wrap">
                     <div class="acc-desk">
                       <div class="user-icon">
-                        <a href="account.html" class="user-icon-desk">
+                        <a href="/account" class="user-icon-desk">
                           <span><i class="icon-user"></i></span>
                         </a>
                       </div>
                       <div class="user-info">
-                        <span class="acc-title" id="title"></span>
+                        <a href="/"><span class="acc-title" id="title"></span></a>
                         <div class="account-login" id="login">
                           <a href="/signup">Register</a>
                           <a href="/login">Log in</a>
@@ -964,21 +964,4 @@
   </header>
   <!-- header end -->
 
-  <script>
-    const url = 'http://localhost:3000/api/v1/sessionDetails';
-    getApi(url);
-    async function getApi(url){
-      const response = await fetch(url);
-      const data = await response.json();
-      if(data.username != 'Account'){
-        document.getElementById('title').innerHTML = data.username;
-        document.getElementById('logout').style.display = "block";
-        document.getElementById('login').style.display = "none";
-      }else{
-        document.getElementById('title').innerHTML = data.username;
-        document.getElementById('logout').style.display = "none";
-        document.getElementById('login').style.display = "block";
-      }
-      
-    }
-  </script>
+  

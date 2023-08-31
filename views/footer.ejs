@@ -209,6 +209,26 @@
 <script src="js/swiper.min.js"></script>
 <!-- custom -->
 <script src="js/custom.js"></script>
+
+<script>
+  const url = 'http://localhost:3000/api/v1/sessionDetails';
+  getApi(url);
+  async function getApi(url) {
+    const response = await fetch(url);
+    const data = await response.json();
+    if (data.username != 'Account') {
+      document.getElementById('title').innerHTML = data.username;
+      document.getElementById('logout').style.display = "block";
+      document.getElementById('login').style.display = "none";
+    } else {
+      document.getElementById('title').innerHTML = data.username;
+      document.getElementById('logout').style.display = "none";
+      document.getElementById('login').style.display = "block";
+    }
+
+  }
+</script>
+
 </body>
 
 <!-- Mirrored from spacingtech.com/html/vegist-final/vegist/index1.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 29 Aug 2023 06:00:15 GMT -->

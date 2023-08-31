@@ -44,6 +44,8 @@ app.use(cookieParser());
 app.set('view engine', 'ejs');
 
 
+// module.exports = app;
+
 //functions
 app.get('/login',(req, res) => {
   res.render('login');
@@ -54,9 +56,10 @@ app.post('/login_details',(req, res) => {
   var password = req.body.password;
 
   var qry = `select * from registration_table where username='${username}'`;
-
+  
   db.query(qry, (err, result) => {
     if(err){
+      
       res.send(err);
     }else{
       if(result != ''){
@@ -76,6 +79,9 @@ app.post('/login_details',(req, res) => {
             res.redirect('/login');
           }
         })
+      }else{
+        console.log('user is not');
+        res.redirect('/login');
       }
     }
   })
@@ -110,11 +116,24 @@ app.get('/api/v1/sessionDetails',(req, res) => {
     if(req.session.role == 2){
       var username = req.session.username;
       var role = req.session.role;
-      var sessionDetails = {
-        username: username,
-        role: role
-      }
-      res.send(sessionDetails);
+
+      var qry = `SELECT * from registration_table where username='${username}'`;
+
+      db.query(qry, (err, result) => {  
+        if(err){
+          console.log('we are in trouble error is here');
+        }else{
+          var sessionDetails = {
+            name: result[0].name,
+            email: result[0].email,
+            mobile: result[0].mobile,
+            username: username,
+            role: role,
+          }
+          res.send(sessionDetails);
+        }
+      })
+      
     }
   }else{
     var sessionDetails = {
@@ -126,6 +145,46 @@ app.get('/api/v1/sessionDetails',(req, res) => {
 })
 app.get('/signup', (req, res) => {
   res.render('register');
+})
+
+app.get('/account', (req, res) => {
+  res.render('account');
+})
+
+app.get('/logout', (req, res) => {
+  req.session.destroy();
+  res.redirect('/login');
+})
+
+app.get('/profile', (req, res) => {
+
+  if(req.session.role){
+    if(req.session.role == 2){
+      var username = req.session.username;
+      var password = req.session.password;
+
+      var qry = `SELECT * from registration_table where username='${username}' and password='${password}'`;
+
+      db.query(qry, (err, result) => {
+        if(err){
+          console.log('something went wrong');
+        }else{
+          const userDetails = {
+            name: result.name,
+            email: result[0].email,
+            mobile: result[0].mobile,
+            username: result[0].username,
+            password: result[0].password,
+          };
+          res.render('profile',{userDetails});
+        }
+      })
+    }else{
+      res.redirect('/login');
+    }
+  }else{
+    res.redirect('/login');
+  }
 })
 
 app.post('/register', (req, res) => {
