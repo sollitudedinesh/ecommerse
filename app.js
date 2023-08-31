@@ -163,14 +163,13 @@ app.get('/profile', (req, res) => {
       var username = req.session.username;
       var password = req.session.password;
 
-      var qry = `SELECT * from registration_table where username='${username}' and password='${password}'`;
-
+      var qry = `SELECT * from registration_table where username='${username}'`;
       db.query(qry, (err, result) => {
         if(err){
           console.log('something went wrong');
         }else{
-          const userDetails = {
-            name: result.name,
+           const userDetails = {
+            name: result[0].name,
             email: result[0].email,
             mobile: result[0].mobile,
             username: result[0].username,

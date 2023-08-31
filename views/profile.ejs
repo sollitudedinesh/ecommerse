@@ -811,7 +811,7 @@
                   </div>
                 </div>
                 <div class="order-name">
-                  <h4 id="acc_name"></h4>
+                  <h4 id="acc_name"><%= userDetails.name%></h4>
                   <span>Joined april 06, 2021</span>
                 </div>
               </div>
@@ -832,32 +832,22 @@
               <form>
                 <ul class="pro-input-label">
                   <li>
-                    <label>First name</label>
-                    <input type="text" name="name" placeholder="First name">
+                    <label>Fullname</label>
+                    <input type="text" name="name" id="name" placeholder="Full name" value='<%= userDetails.name%>'>
                   </li>
                   <li>
-                    <label>Last name</label>
-                    <input type="text" name="name" placeholder="Last name">
-                  </li>
-                </ul>
-                <ul class="pro-input-label">
-                  <li>
-                    <label>Email address</label>
-                    <input type="text" name="name" placeholder="Email address" required>
-                  </li>
-                  <li>
-                    <label>Phone number</label>
-                    <input type="text" name="name" placeholder="Phone number">
+                    <label>Email</label>
+                    <input type="email" name="email" id="email" placeholder="Email" value="<%= userDetails.email%>">
                   </li>
                 </ul>
                 <ul class="pro-input-label">
                   <li>
-                    <label>New password</label>
-                    <input type="text" name="name" placeholder="New password">
+                    <label>Mobile</label>
+                    <input type="text" name="mobile" placeholder="Mobile" required value="<%= userDetails.mobile%>">
                   </li>
                   <li>
-                    <label>Confirm password</label>
-                    <input type="text" name="name" placeholder="Confirm password">
+                    <label>Username</label>
+                    <input type="text" name="username" id="username" placeholder="Username" value="<%= userDetails.username%>">
                   </li>
                 </ul>
                 <ul class="pro-submit">
