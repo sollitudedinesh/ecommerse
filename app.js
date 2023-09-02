@@ -47,19 +47,42 @@ app.set('view engine', 'ejs');
 // module.exports = app;
 
 //functions
-app.get('/login',(req, res) => {
-  res.render('login');
-});
+const home = (req, res) => {
+  
+  if(req.session){    
+    if(req.session.role == 2){
+      var username = req.session.username;
+      var password = req.session.password;
+      var qry = `SELECT * from registration_table where username='${username}' and password='${password}'`;
+      db.query(qry, (err, result) => {
+        if(err){
+          res.send(err);
+        }else{
+          res.render('home',{username});
+        }
+      })
+    }else{
+      var username = "Account";
+      res.render('home',{username});
+    }
+  }else{
+    res.render('home');
+  }
+  
+};
 
-app.post('/login_details',(req, res) => {
+const login = (req, res) => {
+  res.render('login');
+};
+
+const submitLogin = (req, res) => {
   var username = req.body.username;
   var password = req.body.password;
 
   var qry = `select * from registration_table where username='${username}'`;
   
   db.query(qry, (err, result) => {
-    if(err){
-      
+    if(err){      
       res.send(err);
     }else{
       if(result != ''){
@@ -85,31 +108,67 @@ app.post('/login_details',(req, res) => {
       }
     }
   })
-})
+};
 
-app.get('/', (req, res) => {
-  
-  if(req.session){    
-    if(req.session.role == 2){
-      var username = req.session.username;
-      var password = req.session.password;
-      var qry = `SELECT * from registration_table where username='${username}' and password='${password}'`;
+const signup = (req, res) => {
+  res.render('register');
+};
+
+const registerDetails = (req, res) => {
+  var name = req.body.name;
+  var email = req.body.email;
+  var mobile = req.body.mobile;
+  var password = req.body.password;
+  var username = req.body.username;
+
+  const saltRound = 10;
+  bcrypt.hash(password, saltRound, (err, hash) => {
+
+    if(err){
+      res.send(err);
+    }else{
+      const qry = `INSERT into registration_table (name,email,mobile,username,password,role) VALUES ('${name}','${email}','${mobile}','${username}','${hash}','2')`;
+
       db.query(qry, (err, result) => {
         if(err){
           res.send(err);
         }else{
-          res.render('home',{username});
+          const transporter = nodemailer.createTransport({
+            service: 'Gmail',
+             auth: {
+                    user: 'dineshkumar2001jan@gmail.com',
+                    pass: 'pxwsabobaplsrdzq'
+                  }
+          })
+
+          const mailTemplate = `
+              Your registration successfull now you can login with your username and password we mentioned your username password below
+              Username: ${username} Password: ${password}`
+
+          const loginSuccessfulEmail = {
+            from: 'dineshkumar2001jan@gmail.com',
+            to: email,
+            subject: 'Registration successfull',
+            text: mailTemplate
+          }
+
+          transporter.sendMail(loginSuccessfulEmail, (error, response) => {
+            if(error){
+              console.log('something fishyyy happend');
+            }else{
+              res.redirect('/login');
+            }
+          })
         }
       })
-    }else{
-      var username = "Account";
-      res.render('home',{username});
     }
-  }else{
-    res.render('home');
-  }
+  })
   
-});
+};
+
+app.route('/').get(home);
+app.route('/login').get(login).post(submitLogin);
+app.route('/register').get(signup).post(registerDetails);
 
 app.get('/api/v1/sessionDetails',(req, res) => {
   if(req.session.role){
@@ -143,9 +202,6 @@ app.get('/api/v1/sessionDetails',(req, res) => {
     res.send(sessionDetails);
   }
 })
-app.get('/signup', (req, res) => {
-  res.render('register');
-})
 
 app.get('/account', (req, res) => {
   res.render('account');
@@ -169,6 +225,7 @@ app.get('/profile', (req, res) => {
           console.log('something went wrong');
         }else{
            const userDetails = {
+            id: result[0].id,
             name: result[0].name,
             email: result[0].email,
             mobile: result[0].mobile,
@@ -186,59 +243,23 @@ app.get('/profile', (req, res) => {
   }
 })
 
-app.post('/register', (req, res) => {
-  var name = req.body.name;
+app.post('/updateProfile',(req, res) => {
+  var fullname = req.body.name;
   var email = req.body.email;
   var mobile = req.body.mobile;
-  var password = req.body.password;
   var username = req.body.username;
+  var user_id = req.body.user_id;
 
-  const saltRound = 10;
-  bcrypt.hash(password, saltRound, (err, hash) => {
+  var qry = `UPDATE registration_table set name='${fullname}',email='${email}',mobile='${mobile}',username='${username}' where id='${user_id}'`;
 
+  db.query(qry, (err, result) => {
     if(err){
-      res.send(err);
+      console.log('something went wrong');
     }else{
-      const qry = `INSERT into registration_table (name,email,mobile,username,password) VALUES ('${name}','${email}','${mobile}','${username}','${hash}')`;
-
-      db.query(qry, (err, result) => {
-        if(err){
-          res.send(err);
-        }else{
-          const transporter = nodemailer.createTransport({
-            service: 'Gmail',
-             auth: {
-                    user: 'dineshkumar2001jan@gmail.com',
-                    pass: 'pxwsabobaplsrdzq'
-                  }
-          })
-
-          const mailTemplate = `<div>
-          <p>Your registration successfull now you can login with your username and password we mentioned your username password below</p>
-          <p>Username: ${username}</p>
-          <p>Password: ${password}</p>
-          <div>`
-
-          const loginSuccessfulEmail = {
-            from: 'dineshkumar2001jan@gmail.com',
-            to: email,
-            subject: 'Registration successfull',
-            template: mailTemplate
-          }
-
-          transporter.sendMail(loginSuccessfulEmail, (error, response) => {
-            if(error){
-              console.log('something fishyyy happend');
-            }else{
-              res.redirect('/login');
-            }
-          })
-        }
-      })
+      res.redirect('/profile')
     }
   })
-  
-})
+});
 
 
 //server creation

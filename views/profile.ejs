@@ -829,11 +829,12 @@
               </div>
             </div>
             <div class="profile-form">
-              <form>
+              <form action="/updateProfile" method="POST">
                 <ul class="pro-input-label">
                   <li>
                     <label>Fullname</label>
                     <input type="text" name="name" id="name" placeholder="Full name" value='<%= userDetails.name%>'>
+                    <input type="hidden" name="user_id" id="user_id" value="<%= userDetails.id%>">
                   </li>
                   <li>
                     <label>Email</label>
@@ -847,7 +848,7 @@
                   </li>
                   <li>
                     <label>Username</label>
-                    <input type="text" name="username" id="username" placeholder="Username" value="<%= userDetails.username%>">
+                    <input type="text" name="username" id="username" placeholder="Username" value="<%= userDetails.username%>" readonly>
                   </li>
                 </ul>
                 <ul class="pro-submit">
@@ -856,7 +857,7 @@
                     <label>Subscribe me to newsletter</label>
                   </li>
                   <li>
-                    <a href="profile.html" class="btn btn-style1">Update profile</a>
+                    <button class="btn btn-style1">Update profile</button>
                   </li>
                 </ul>
               </form>
