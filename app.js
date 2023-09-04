@@ -17,6 +17,10 @@ const bcrypt = require('bcrypt');
 
 const nodemailer = require('nodemailer');
 
+const userRouter = require('./routes/user.routes');
+
+const commonRouter = require('./routes/Common_routes');
+
 
 
 
@@ -43,132 +47,14 @@ app.use(cookieParser());
 
 app.set('view engine', 'ejs');
 
+app.use('/', userRouter);
+
+app.use('/', commonRouter);
+
 
 // module.exports = app;
 
 //functions
-const home = (req, res) => {
-  
-  if(req.session){    
-    if(req.session.role == 2){
-      var username = req.session.username;
-      var password = req.session.password;
-      var qry = `SELECT * from registration_table where username='${username}' and password='${password}'`;
-      db.query(qry, (err, result) => {
-        if(err){
-          res.send(err);
-        }else{
-          res.render('home',{username});
-        }
-      })
-    }else{
-      var username = "Account";
-      res.render('home',{username});
-    }
-  }else{
-    res.render('home');
-  }
-  
-};
-
-const login = (req, res) => {
-  res.render('login');
-};
-
-const submitLogin = (req, res) => {
-  var username = req.body.username;
-  var password = req.body.password;
-
-  var qry = `select * from registration_table where username='${username}'`;
-  
-  db.query(qry, (err, result) => {
-    if(err){      
-      res.send(err);
-    }else{
-      if(result != ''){
-        bcrypt.compare(password, result[0].password, (error, hash) => {
-          if(error){
-            res.send(error);
-          }else if(hash){
-            console.log('user can login now');
-            req.session.username = username;
-            req.session.password = password;
-            req.session.role = result[0].role;  
-            req.session.save();
-            console.log(req.session);
-            res.redirect('/');
-          }else{
-            console.log('password is incorrect');
-            res.redirect('/login');
-          }
-        })
-      }else{
-        console.log('user is not');
-        res.redirect('/login');
-      }
-    }
-  })
-};
-
-const signup = (req, res) => {
-  res.render('register');
-};
-
-const registerDetails = (req, res) => {
-  var name = req.body.name;
-  var email = req.body.email;
-  var mobile = req.body.mobile;
-  var password = req.body.password;
-  var username = req.body.username;
-
-  const saltRound = 10;
-  bcrypt.hash(password, saltRound, (err, hash) => {
-
-    if(err){
-      res.send(err);
-    }else{
-      const qry = `INSERT into registration_table (name,email,mobile,username,password,role) VALUES ('${name}','${email}','${mobile}','${username}','${hash}','2')`;
-
-      db.query(qry, (err, result) => {
-        if(err){
-          res.send(err);
-        }else{
-          const transporter = nodemailer.createTransport({
-            service: 'Gmail',
-             auth: {
-                    user: 'dineshkumar2001jan@gmail.com',
-                    pass: 'pxwsabobaplsrdzq'
-                  }
-          })
-
-          const mailTemplate = `
-              Your registration successfull now you can login with your username and password we mentioned your username password below
-              Username: ${username} Password: ${password}`
-
-          const loginSuccessfulEmail = {
-            from: 'dineshkumar2001jan@gmail.com',
-            to: email,
-            subject: 'Registration successfull',
-            text: mailTemplate
-          }
-
-          transporter.sendMail(loginSuccessfulEmail, (error, response) => {
-            if(error){
-              console.log('something fishyyy happend');
-            }else{
-              res.redirect('/login');
-            }
-          })
-        }
-      })
-    }
-  })
-  
-};
-
-app.route('/').get(home);
-app.route('/login').get(login).post(submitLogin);
-app.route('/register').get(signup).post(registerDetails);
 
 app.get('/api/v1/sessionDetails',(req, res) => {
   if(req.session.role){
@@ -201,15 +87,6 @@ app.get('/api/v1/sessionDetails',(req, res) => {
     }
     res.send(sessionDetails);
   }
-})
-
-app.get('/account', (req, res) => {
-  res.render('account');
-})
-
-app.get('/logout', (req, res) => {
-  req.session.destroy();
-  res.redirect('/login');
 })
 
 app.get('/profile', (req, res) => {
