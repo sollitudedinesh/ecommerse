@@ -20,5 +20,29 @@ module.exports={
         return callback(data);
       }
     })
-  }
+  },
+  profileDetails: (username, callback) => {
+    var sql = `SELECT * from registration_table where username='${username}'`;
+    console.log(sql);
+
+    db.query(sql, (err, result) => {
+      if(err){
+        console.log('Something went wrong');
+        result.redirect('/');
+      }else{
+        return callback(result);
+      }
+    })
+  },
+  updateProfile: (inputData,userId, callback) => {
+    var sql = `UPDATE registration_table set ?`;
+    db.query(sql,[inputData,userId], (err, data) => {
+      if(err){
+        console.log('Something went wrong');
+        res.redirect('/');
+      }else{
+        return callback(data);
+      }
+    })
+  },
 }

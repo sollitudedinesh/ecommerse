@@ -16,6 +16,19 @@ const bcrypt = require('bcrypt');
 
 const nodemailer = require('nodemailer');
 
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'profile/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
+
 module.exports={
   registerForm: (req, res) => {
     res.render('register')
@@ -108,5 +121,39 @@ module.exports={
   },
   account:(req, res) => {
     res.render('account');
+  },
+  profile: (req, res) => {
+    var username = req.session.username;
+    console.log(username);
+    user.profileDetails(username, (data) => {
+      console.log(data);
+      const userDetails = {
+        id: data[0].id,
+        name: data[0].name,
+        email: data[0].email,
+        mobile: data[0].mobile,
+        username: data[0].username,
+        password: data[0].password
+      };
+      res.render('profile',{userDetails});
+    })
+  },
+  updateProfile: (req, res) => {
+    var fullname = req.body.name;
+    var email = req.body.email;
+    var mobile = req.body.mobile;
+    var username = req.body.username;
+    var user_id = req.body.user_id;
+
+    const inputData = {
+      name: fullname,
+      email: email,
+      mobile: mobile,
+      username: username
+    };
+
+    user.updateProfile(inputData,user_id, (data) => {
+      res.redirect('/profile');
+    })
   }
 }

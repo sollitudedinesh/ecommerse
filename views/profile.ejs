@@ -789,32 +789,7 @@
         <div class="col">
           <div class="order-history">
             <div class="profile">
-              <div class="order-pro">
-                <div class="pro-img">
-                  <div class="profile-pic-wrapper">
-                    <div class="pic-holder">
-                      <!-- uploaded pic shown here -->
-                      <img id="profilePic" class="pic" src="https://source.unsplash.com/random/150x150?person">
-                  
-                      <Input class="uploadProfileInput" type="file" name="profile_pic" id="newProfilePhoto" accept="image/*" hidden/>
-                      <label for="newProfilePhoto" class="upload-file-block">
-                        <div class="text-center">
-                          <div class="mb-2">
-                            <i class="fa fa-camera fa-2x"></i>
-                          </div>
-                          <div class="text-uppercase">
-                            Update <br /> Profile Photo
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-                <div class="order-name">
-                  <h4 id="acc_name"><%= userDetails.name%></h4>
-                  <span>Joined april 06, 2021</span>
-                </div>
-              </div>
+              
               <div class="order-his-page">
                 <ul class="profile-ul">
                   <li class="profile-li"><a href="order-history.html"><span>Orders</span> <span
@@ -830,6 +805,31 @@
             </div>
             <div class="profile-form">
               <form action="/updateProfile" method="POST">
+                <div class="order-pro">
+                  <div class="pro-img">
+                    <div class="profile-pic-wrapper">
+                      <div class="pic-holder">
+                        <!-- uploaded pic shown here -->
+                        <img id="profilePic" class="pic" src="https://source.unsplash.com/random/150x150?person">                
+                        <Input class="uploadProfileInput" type="file" name="profile_pic" id="newProfilePhoto" accept="image/*" hidden />
+                        <label for="newProfilePhoto" class="upload-file-block">
+                          <div class="text-center">
+                            <div class="mb-2">
+                              <i class="fa fa-camera fa-2x"></i>
+                            </div>
+                            <div class="text-uppercase">
+                              Update <br /> Profile Photo
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                      <h4 id="acc_name">
+                        <%= userDetails.name%>
+                      </h4>
+                      <span>Joined april 06, 2021</span>
+                    </div>
+                  </div>
+                </div>
                 <ul class="pro-input-label">
                   <li>
                     <label>Fullname</label>

@@ -52,7 +52,7 @@ app.use('/', userRouter);
 app.use('/', commonRouter);
 
 
-// module.exports = app;
+module.exports = app;
 
 //functions
 
@@ -87,38 +87,7 @@ app.get('/api/v1/sessionDetails',(req, res) => {
     }
     res.send(sessionDetails);
   }
-})
-
-app.get('/profile', (req, res) => {
-
-  if(req.session.role){
-    if(req.session.role == 2){
-      var username = req.session.username;
-      var password = req.session.password;
-
-      var qry = `SELECT * from registration_table where username='${username}'`;
-      db.query(qry, (err, result) => {
-        if(err){
-          console.log('something went wrong');
-        }else{
-           const userDetails = {
-            id: result[0].id,
-            name: result[0].name,
-            email: result[0].email,
-            mobile: result[0].mobile,
-            username: result[0].username,
-            password: result[0].password,
-          };
-          res.render('profile',{userDetails});
-        }
-      })
-    }else{
-      res.redirect('/login');
-    }
-  }else{
-    res.redirect('/login');
-  }
-})
+});
 
 app.post('/updateProfile',(req, res) => {
   var fullname = req.body.name;
@@ -133,15 +102,7 @@ app.post('/updateProfile',(req, res) => {
     if(err){
       console.log('something went wrong');
     }else{
-      res.redirect('/profile')
+      res.redirect('/profile');
     }
   })
 });
-
-
-//server creation
-const port = process.env.PORT || 3000;
-
-app.listen(port,'localhost',(err, res) => {
-  console.log('project is running now');
-})

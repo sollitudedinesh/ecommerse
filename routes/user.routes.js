@@ -16,4 +16,6 @@ router.get('/logout', userController.logout);
 
 router.get('/account',userController.account);
 
+router.get('/profile',userController.profile);
+
 module.exports = router;
