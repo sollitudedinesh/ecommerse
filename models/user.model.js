@@ -23,8 +23,6 @@ module.exports={
   },
   profileDetails: (username, callback) => {
     var sql = `SELECT * from registration_table where username='${username}'`;
-    console.log(sql);
-
     db.query(sql, (err, result) => {
       if(err){
         console.log('Something went wrong');

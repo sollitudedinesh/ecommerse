@@ -16,18 +16,35 @@ const bcrypt = require('bcrypt');
 
 const nodemailer = require('nodemailer');
 
-const multer = require('multer');
+const upload = require('express-fileupload');
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'profile/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname);
-  },
-});
+// const multer = require('multer');
 
-const upload = multer({ storage: storage });
+const app = express();
+
+app.use(bodyParser.urlencoded({ extended:true }));
+
+app.use(bodyParser.json());
+
+app.use(upload());
+
+// app.use(express.urlencoded({ extended: true }));
+
+// const storage = multer.diskStorage({
+//     destination: '../assets/uploads/'
+// });
+
+// // Init Upload
+// const upload = multer({
+//     storage: storage,
+//     limits: { fileSize: 1000000 },
+//     fileFilter: function (req, file, cb) {
+//         checkFileType(file, cb);
+//     }
+// });
+
+// app.use(upload.single('profile_pic'));
+
 
 module.exports={
   registerForm: (req, res) => {
@@ -50,9 +67,12 @@ module.exports={
           name :name,
           email :email,
           mobile :mobile,
-          password :password,
+          password :hash,
           username :username,
+          role: 2
         };
+
+        // res.send(inputData);
         const transporter = nodemailer.createTransport({
           service: 'Gmail',
             auth: {
@@ -120,40 +140,67 @@ module.exports={
     res.redirect('/');
   },
   account:(req, res) => {
-    res.render('account');
+    if(req.session){
+      if(req.session.role == 2){
+        res.render('account');
+      }else{
+        res.redirect('/login');
+      }
+    }
+    
   },
   profile: (req, res) => {
-    var username = req.session.username;
-    console.log(username);
-    user.profileDetails(username, (data) => {
-      console.log(data);
-      const userDetails = {
-        id: data[0].id,
-        name: data[0].name,
-        email: data[0].email,
-        mobile: data[0].mobile,
-        username: data[0].username,
-        password: data[0].password
-      };
-      res.render('profile',{userDetails});
-    })
+    if(req.session){
+      if(req.session.role == 2){
+        var username = req.session.username;
+        console.log(username);
+        user.profileDetails(username, (data) => {
+          console.log(data);
+          const userDetails = {
+            id: data[0].id,
+            name: data[0].name,
+            email: data[0].email,
+            mobile: data[0].mobile,
+            username: data[0].username,
+            password: data[0].password
+          };
+          // res.send(userDetails);
+          res.render('profile',{userDetails});
+        })
+      }else{
+        res.redirect('/login');
+      }
+    }else{
+      res.redirect('/login');
+    }
+    
   },
   updateProfile: (req, res) => {
-    var fullname = req.body.name;
-    var email = req.body.email;
-    var mobile = req.body.mobile;
-    var username = req.body.username;
-    var user_id = req.body.user_id;
+    
+    var uploadedFile = req.files.newFile;   // profile pic is input file name
+    console.log(uploadedFile.name);
+    uploadedFile.mv(`./assets/uploads/${uploadedFile.name}`, (err) => {
+      if(err){
+        console.log(err);
+      }else{
+        var fullname = req.body.name;
+        var email = req.body.email;
+        var mobile = req.body.mobile;
+        var profile_pic = uploadedFile.name;
+        var user_id = req.body.user_id;
 
-    const inputData = {
-      name: fullname,
-      email: email,
-      mobile: mobile,
-      username: username
-    };
+        const inputData = {
+          name: fullname,
+          email: email,
+          mobile: mobile,
+          profile_pic: profile_pic,
+        };
 
-    user.updateProfile(inputData,user_id, (data) => {
-      res.redirect('/profile');
+        console.log(inputData);
+        user.updateProfile(inputData,user_id, (data) => {
+          res.redirect('/profile');
+        })
+      }
     })
   }
 }

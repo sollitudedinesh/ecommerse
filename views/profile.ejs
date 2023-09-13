@@ -804,14 +804,14 @@
               </div>
             </div>
             <div class="profile-form">
-              <form action="/updateProfile" method="POST">
+              <form action="/profile" method="POST" enctype="multipart/form-data">
                 <div class="order-pro">
                   <div class="pro-img">
                     <div class="profile-pic-wrapper">
                       <div class="pic-holder">
                         <!-- uploaded pic shown here -->
                         <img id="profilePic" class="pic" src="https://source.unsplash.com/random/150x150?person">                
-                        <Input class="uploadProfileInput" type="file" name="profile_pic" id="newProfilePhoto" accept="image/*" hidden />
+                        <Input class="uploadProfileInput" type="file" name="profile_pic" id="newProfilePhoto" hidden/>
                         <label for="newProfilePhoto" class="upload-file-block">
                           <div class="text-center">
                             <div class="mb-2">
@@ -849,11 +849,12 @@
                   <li>
                     <label>Username</label>
                     <input type="text" name="username" id="username" placeholder="Username" value="<%= userDetails.username%>" readonly>
+                    <input type="file" name="newFile" id="new-file">
                   </li>
                 </ul>
                 <ul class="pro-submit">
                   <li>
-                    <input type="checkbox" name="name">
+                    <input type="checkbox">
                     <label>Subscribe me to newsletter</label>
                   </li>
                   <li>

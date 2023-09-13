@@ -17,6 +17,10 @@ const bcrypt = require('bcrypt');
 
 const nodemailer = require('nodemailer');
 
+// const multer = require('multer');
+
+const upload = require('express-fileupload');
+
 const userRouter = require('./routes/user.routes');
 
 const commonRouter = require('./routes/Common_routes');
@@ -30,9 +34,9 @@ const app = express();
 
 app.use(express.static('assets'));
 
-app.use(bodyParser.json());
-
 app.use(bodyParser.urlencoded({ extended:true }));
+
+app.use(bodyParser.json());
 
 const oneDay = 1000 * 24 * 60 * 60;
 
@@ -46,6 +50,8 @@ app.use(session({
 app.use(cookieParser());
 
 app.set('view engine', 'ejs');
+
+app.use(upload());
 
 app.use('/', userRouter);
 
@@ -87,22 +93,4 @@ app.get('/api/v1/sessionDetails',(req, res) => {
     }
     res.send(sessionDetails);
   }
-});
-
-app.post('/updateProfile',(req, res) => {
-  var fullname = req.body.name;
-  var email = req.body.email;
-  var mobile = req.body.mobile;
-  var username = req.body.username;
-  var user_id = req.body.user_id;
-
-  var qry = `UPDATE registration_table set name='${fullname}',email='${email}',mobile='${mobile}',username='${username}' where id='${user_id}'`;
-
-  db.query(qry, (err, result) => {
-    if(err){
-      console.log('something went wrong');
-    }else{
-      res.redirect('/profile');
-    }
-  })
 });
