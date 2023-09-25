@@ -43,4 +43,15 @@ module.exports={
       }
     })
   },
+  sessionDetails: (username, callback) => {
+    var sql = `select * from registration_table where username='${username}'`;
+    db.query(sql, (err, data) => {
+      if(err){
+        console.log('something went wrong');
+        res.redirect('/');
+      }else{
+        return callback(data);
+      }
+    })
+  }
 }

@@ -1,0 +1,80 @@
+<%- include('header')%>
+<div class="body-content px-8 py-8 bg-slate-100">
+  <div class="grid grid-cols-12">
+    <div class="col-span-10">
+      <div class="flex justify-between mb-10 items-end">
+        <div class="page-title">
+          <h3 class="mb-0 text-[28px]">Category</h3>
+          <ul class="text-tiny font-medium flex items-center space-x-3 text-text3">
+            <li class="breadcrumb-item text-muted">
+              <a href="product-list.html" class="text-hover-primary"> Home</a>
+            </li>
+            <li class="breadcrumb-item flex items-center">
+              <span class="inline-block bg-text3/60 w-[4px] h-[4px] rounded-full"></span>
+            </li>
+            <li class="breadcrumb-item text-muted">Category List</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- add product -->
+  <div class="grid grid-cols-12 gap-12">    
+    <div class="col-span-12 lg:col-span-12">
+      <form action="/editCategory" method="post" enctype="multipart/form-data">
+      <div class="mb-6 bg-white px-8 py-8 rounded-md">
+        <div class="mb-6">
+          <p class="mb-2 text-base text-black">Upload Image</p>
+          <div class="text-center">
+            <img class="w-[100px] h-auto mx-auto" src="categoryImageFolder/<%= data[0].cat_img%>" alt="">
+          </div>
+          <span class="text-tiny text-center w-full inline-block mb-3">Image size must be less than 5Mb</span>
+          <div class="">
+              <input type="file" id="productImage" name="catImage" class="hidden">
+              <input type="hidden" id="cat_img" name="cat_img" value="<%= data[0].cat_img%>">
+              <label for="productImage" class="text-tiny w-full inline-block py-1 px-4 rounded-md border border-gray6 text-center hover:cursor-pointer hover:bg-theme hover:text-white hover:border-theme transition">Upload Image</label>
+          </div>
+        </div>
+        <!-- input -->
+        <div class="mb-6">
+          <p class="mb-0 text-base text-black">Name</p>
+          <input class="input w-full h-[44px] rounded-md border border-gray6 px-6 text-base" type="text" placeholder="Name" name="category_name" id="category_name" value="<%= data[0].category_name%>">
+          <input type="hidden" name="cat_id" id="cat_id" value="<%= data[0].id%>">
+        </div>
+        <!-- input -->
+        <div class="mb-6">
+          <p class="mb-0 text-base text-black">Slug</p>
+          <input class="input w-full h-[44px] rounded-md border border-gray6 px-6 text-base" type="text" placeholder="Slug" name="slug" id="slug" value="<%= data[0].slug%>">
+        </div>
+        <!-- input -->
+        <div class="mb-6">
+          <p class="mb-0 text-base text-black">Parent</p>
+          <div class="category-add-select select-bordered">
+            <select name="parent" id="parent">
+              <option <% if(data[0].parent_cat == '1'){%> Selected <% }%> value="1">Vegetables</option>
+              <option <% if(data[0].parent_cat == '2'){%> Selected <% }%> value="2">Fruits</option>
+            </select>
+          </div>
+        </div>
+        <!-- input -->
+        <div class="mb-6">
+          <p class="mb-0 text-base text-black">Description</p>
+          <textarea class="input h-[150px] w-full py-3 resize-none" placeholder="Description Here" name="description"><%= data[0].description%></textarea>
+        </div>
+
+        <div class="tp-checkbox flex items-center mb-5">
+          <input id="product-1" type="checkbox">
+          <label for="product-1" class="text-tiny">Create As Parent Category</label>
+        </div>
+
+        <button class="tp-btn px-7 py-2">Add Category</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<%- include('footer')%>

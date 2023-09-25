@@ -25,6 +25,8 @@ const userRouter = require('./routes/user.routes');
 
 const commonRouter = require('./routes/Common_routes');
 
+const adminRouter = require('./routes/admin.routes'); 
+
 
 
 
@@ -56,6 +58,8 @@ app.use(upload());
 app.use('/', userRouter);
 
 app.use('/', commonRouter);
+
+app.use('/', adminRouter);
 
 
 module.exports = app;

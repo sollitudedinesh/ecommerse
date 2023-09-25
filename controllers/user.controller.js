@@ -117,13 +117,23 @@ module.exports={
           if(error){
             res.send(error);
           }else if(hash){
-            console.log('user can login now');
-            req.session.username = username;
-            req.session.password = password;
-            req.session.role = data[0].role;  
-            req.session.save();
-            console.log(req.session);
-            res.redirect('/');
+            if(data[0].role == 1){
+              console.log('user can login now');
+              req.session.username = username;
+              req.session.password = password;
+              req.session.role = data[0].role;  
+              req.session.save();
+              console.log(req.session);
+              res.redirect('/adminDashboard');
+            }else{
+              console.log('user can login now');
+              req.session.username = username;
+              req.session.password = password;
+              req.session.role = data[0].role;  
+              req.session.save();
+              console.log(req.session);
+              res.redirect('/');
+            }           
           }else{
             console.log('password is incorrect');
             res.redirect('/login');
@@ -162,7 +172,8 @@ module.exports={
             email: data[0].email,
             mobile: data[0].mobile,
             username: data[0].username,
-            password: data[0].password
+            password: data[0].password,
+            profile_pic: data[0].profile_pic
           };
           // res.send(userDetails);
           res.render('profile',{userDetails});
@@ -175,8 +186,7 @@ module.exports={
     }
     
   },
-  updateProfile: (req, res) => {
-    
+  updateProfile: (req, res) => {    
     var uploadedFile = req.files.newFile;   // profile pic is input file name
     console.log(uploadedFile.name);
     uploadedFile.mv(`./assets/uploads/${uploadedFile.name}`, (err) => {
@@ -202,5 +212,19 @@ module.exports={
         })
       }
     })
-  }
+  },
+  sessionDetails: (req, res) => {
+    if(req.session.role){
+      if(req.session.role == 2){
+        var username = req.session.username;
+        var role = req.session.role;
+      }
+    }else{
+      var sessionDetails = {
+        username: 'Account',
+        role: 0
+      }
+      res.send(sessionDetails);
+    }
+  },
 }
